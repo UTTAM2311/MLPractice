@@ -1,18 +1,14 @@
 buildscript {
     repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
-    dependencies {
-        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.+'
-    }
+    dependencies { classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.+' }
 }
 
 
 apply plugin: 'java'
-jar.baseName = 'JProbStats'
-group = 'com.JProbStats.stat'
+jar.baseName = 'MLPractice'
+group = 'com.learnr.ml'
 
 repositories {
     mavenCentral()
@@ -21,7 +17,7 @@ repositories {
 
 // Configurations
 configurations {
-    
+
 }
 
 // Ref : http://www.gubatron.com/blog/2014/07/29/gradle-how-to-specify-resources-from-different-folders-on-your-sourceset/
@@ -29,9 +25,9 @@ configurations {
 sourceSets {
     main {
         java {
-        
+
         }
-        
+
         resources {
             exclude '**/*.jar'
             include '**/*.so'
@@ -40,22 +36,32 @@ sourceSets {
 }
 
 dependencies {
-    
-    // Main compilations 
-    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
-    compile group: 'commons-io', name: 'commons-io', version: '2.4'
-    
-}
 
-test {
-}
+    // Main compilations
+    // http://mvnrepository.com/artifact/org.apache.commons/commons-csv
+    compile group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
 
+    // https://mvnrepository.com/artifact/org.apache.spark/spark-mllib_2.10
+    compile group: 'org.apache.spark', name: 'spark-mllib_2.10', version: '1.6.1'
+
+    // http://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+
+
+    // http://mvnrepository.com/artifact/org.apache.commons/commons-math3
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
+    // http://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+
+    /// http://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+}
+ 
 
 // source compatibility
-compileJava.doFirst {
-    println "Java source compatibility version : " + sourceCompatibility
-}
+compileJava.doFirst { println "Java source compatibility version : " + sourceCompatibility }
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = "1.8"
