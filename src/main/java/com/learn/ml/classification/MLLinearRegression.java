@@ -18,7 +18,7 @@ public class MLLinearRegression {
 
     @SuppressWarnings({"serial", "resource"})
     public static void main(String[] args) {
-        String path = "src/main/resources/sample.csv"; // Should be some file on your system
+        String path = "src/main/resources/home.csv"; // Should be some file on your system
         SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
@@ -39,6 +39,7 @@ public class MLLinearRegression {
 
         System.out.println(parsedData.count());
 
+        //building a model
         int numIterations = 30;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
