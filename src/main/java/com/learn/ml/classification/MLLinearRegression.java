@@ -29,6 +29,7 @@ public class MLLinearRegression {
                 String[] parts = line.split(",");
                 double[] v = new double[parts.length - 1];
 
+                //normalized the data
                 for (int i = 0; i < parts.length - 1; i++)
                     v[i] = Double.parseDouble(parts[i])/1000;
 
@@ -40,12 +41,13 @@ public class MLLinearRegression {
         System.out.println(parsedData.count());
 
         //building a model
-        int numIterations = 30;
+        int numIterations = 30000;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
-        algorithm.optimizer().setStepSize(0.5).setNumIterations(numIterations);
+        algorithm.optimizer().setStepSize(0.00005).setNumIterations(numIterations);
 
         final LinearRegressionModel model = algorithm.run(JavaRDD.toRDD(parsedData));
+    
         // Evaluate model on training examples and compute training error
         JavaRDD<Tuple2<Double, Double>> valuesAndPreds =
                 parsedData.map(new Function<LabeledPoint, Tuple2<Double, Double>>() {
