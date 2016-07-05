@@ -30,9 +30,9 @@ public class MLLinearRegression {
                 double[] v = new double[parts.length - 1];
 
                 for (int i = 0; i < parts.length - 1; i++)
-                    v[i] = Double.parseDouble(parts[i]);
+                    v[i] = Double.parseDouble(parts[i])/1000;
 
-                double yvalue = Double.parseDouble(parts[parts.length - 1]);
+                double yvalue = Double.parseDouble(parts[parts.length - 1])/1000;
                 return new LabeledPoint(yvalue, Vectors.dense(v));
             }
         });
@@ -43,7 +43,7 @@ public class MLLinearRegression {
         int numIterations = 30;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
-        algorithm.optimizer().setStepSize(0.5).setNumIterations(numIterations).setRegParam(1);
+        algorithm.optimizer().setStepSize(0.5).setNumIterations(numIterations);
 
         final LinearRegressionModel model = algorithm.run(JavaRDD.toRDD(parsedData));
         // Evaluate model on training examples and compute training error
