@@ -1,5 +1,6 @@
 package com.learn.ml.classification;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.spark.SparkConf;
@@ -41,10 +42,10 @@ public class MLLinearRegression {
         System.out.println(parsedData.count());
 
         // building a model
-        int numIterations = 30000;
+
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
-        algorithm.optimizer().setStepSize(0.00005).setNumIterations(numIterations);
+        algorithm.optimizer().setStepSize(0.000001).setConvergenceTol(0.0001);
 
         final LinearRegressionModel model = algorithm.run(JavaRDD.toRDD(parsedData));
 
@@ -70,7 +71,7 @@ public class MLLinearRegression {
                     + model.predict(point.features()));
         }
 
-        System.out.println("training Root Mean Squared Error = " + Math.sqrt(MSE));
+        System.out.println("Training Root Mean Squared Error = " + Math.sqrt(MSE));
 
         System.out.println(model.weights());
         System.out.println(model.intercept());
