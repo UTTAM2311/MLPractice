@@ -11,13 +11,13 @@ import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
 
 import scala.Tuple2;
 
-public class LRModelBuilder implements Serializable {
+public class RegressionModelBuilder implements Serializable {
     private static final long serialVersionUID = 6200138757549471043L;
 
     public final LinearRegressionModel model;
     private JavaRDD<LabeledPoint> parsedData;
 
-    public LRModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize) {
+    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
@@ -25,7 +25,7 @@ public class LRModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
-    public LRModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
+    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
@@ -46,8 +46,7 @@ public class LRModelBuilder implements Serializable {
                 });
 
         double MSE = new JavaDoubleRDD(valuesAndPreds.map(new Function<Tuple2<Double, Double>, Object>() {
-
-            private static final long serialVersionUID = -7595654429741861559L;
+            private static final long serialVersionUID = 1L;
 
             public Object call(Tuple2<Double, Double> pair) {
                 return Math.pow(pair._1() - pair._2(), 2.0);
@@ -55,5 +54,17 @@ public class LRModelBuilder implements Serializable {
         }).rdd()).mean();
 
         return Math.sqrt(MSE);
+    }
+
+    public String getEquation() {
+        double[] coeff = model.weights().toArray();
+        double intercept = model.intercept();
+        StringBuilder builder = new StringBuilder();
+        builder.append(intercept + " + ");
+        for (int i = 0; i < coeff.length; i++) {
+            builder.append(coeff[i] + "X" + (i + 1) + " + ");
+        }
+        builder.delete(builder.length() - 3, builder.length());
+        return builder.toString();
     }
 }
