@@ -1,9 +1,7 @@
 package com.learn.ml.classification;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -18,8 +16,7 @@ import org.math.plot.Plot3DPanel;
 public class RoadMapModel {
 
     public static void main(String[] args) {
-        String filepath = "src/main/resources/test.csv";
-        // String filepath = "src/main/resources/3D_spatial_network.csv"; // Should be some file on
+        String filepath = "src/main/resources/3D_spatial_network.csv"; // Should be some file on
         // your system
         SparkConf conf = new SparkConf().setAppName("RoadMap Application").setMaster("local[*]");
 
@@ -38,11 +35,11 @@ public class RoadMapModel {
         System.out.println("Intercept:" + builder.model.intercept());
         System.out.println("Equation:" + builder.getEquation());
         data.getparsedData().cache();
-        int len = data.getparsedData().collect().size();
-        List<String> listX = new ArrayList<>(len);
-        List<String> listY = new ArrayList<>(len);
-        List<String> listZ = new ArrayList<>(len);
-        List<String> listZ2 = new ArrayList<>(len);
+        /*
+         * int len = data.getparsedData().collect().size(); List<String> listX = new
+         * ArrayList<>(len); List<String> listY = new ArrayList<>(len); List<String> listZ = new
+         * ArrayList<>(len); List<String> listZ2 = new ArrayList<>(len);
+         */
         JavaRDD<LabeledPoint> features = data.getparsedData();
 
         JavaRDD<String> Xvalue = features.map(new Function<LabeledPoint, String>() {
@@ -102,14 +99,14 @@ public class RoadMapModel {
         for (int i = 0; i < x.length; i++) {
             z1[i] = Double.parseDouble(Zvalue.collect().get(i));
             z2[i] = Double.parseDouble(ZPredictvalue.collect().get(i));
-            y[i] = Double.parseDouble(Zvalue.collect().get(i));
-            x[i] = Double.parseDouble(Zvalue.collect().get(i));
+            y[i] = Double.parseDouble(Yvalue.collect().get(i));
+            x[i] = Double.parseDouble(Xvalue.collect().get(i));
         }
 
 
 
         // create your PlotPanel (you can use it as a JPanel) with a legend at SOUTH Plot3DPanel
-        Plot3DPanel plot = new Plot3DPanel("SOUTH");
+        Plot3DPanel plot = new Plot3DPanel("3D-RoadMap");
 
         // add grid plot to the PlotPanel
         plot.addScatterPlot("actual-plot", Color.RED, x, y, z1);
