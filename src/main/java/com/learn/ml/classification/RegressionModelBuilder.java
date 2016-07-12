@@ -33,7 +33,7 @@ public class RegressionModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
-    public double getLeastMeanSquareError() {
+    private JavaRDD<Tuple2<Double, Double>> getValuesAndPredict() {
         JavaRDD<Tuple2<Double, Double>> valuesAndPreds =
                 parsedData.map(new Function<LabeledPoint, Tuple2<Double, Double>>() {
                     private static final long serialVersionUID = 1L;
@@ -44,6 +44,12 @@ public class RegressionModelBuilder implements Serializable {
                         return new Tuple2<Double, Double>(prediction, lab);
                     }
                 });
+        return valuesAndPreds;
+
+    }
+
+    public double getLeastMeanSquareError() {
+        JavaRDD<Tuple2<Double, Double>> valuesAndPreds = getValuesAndPredict();
 
         double MSE = new JavaDoubleRDD(valuesAndPreds.map(new Function<Tuple2<Double, Double>, Object>() {
             private static final long serialVersionUID = 1L;
@@ -52,8 +58,25 @@ public class RegressionModelBuilder implements Serializable {
                 return Math.pow(pair._1() - pair._2(), 2.0);
             }
         }).rdd()).mean();
-
         return Math.sqrt(MSE);
+    }
+
+    /**
+     * Mean of the Variation in actual - predicted values.
+     * 
+     * @return
+     */
+    public double getVariation() {
+        JavaRDD<Tuple2<Double, Double>> valuesAndPreds = getValuesAndPredict();
+
+        double Mvar = new JavaDoubleRDD(valuesAndPreds.map(new Function<Tuple2<Double, Double>, Object>() {
+            private static final long serialVersionUID = 1L;
+
+            public Object call(Tuple2<Double, Double> pair) {
+                return Math.abs(pair._1() - pair._2());
+            }
+        }).rdd()).mean();
+        return Mvar;
     }
 
     public String getEquation() {

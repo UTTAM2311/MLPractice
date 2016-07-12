@@ -1,10 +1,7 @@
 buildscript {
-    repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
+    repositories { maven { url "https://plugins.gradle.org/m2/" } }
     dependencies { classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.+' }
 }
-
 
 apply plugin: 'java'
 jar.baseName = 'MLPractice'
@@ -47,18 +44,24 @@ dependencies {
     // http://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
 
+    compile fileTree(dir: 'lib-local', include: ['*.jar'])
 
     // http://mvnrepository.com/artifact/org.apache.commons/commons-math3
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
-    // http://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    // https://mvnrepository.com/artifact/net.ericaro/surfaceplotter
+    compile group: 'net.ericaro', name: 'surfaceplotter', version: '2.0.1'
 
     /// http://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
 }
- 
+
+
+jar {
+    //here we grab all the .class files inside messages.jar and we put them in our resulting jar
+    from (zipTree('lib-local/jmathplot.jar')) { include '**/*.class', "META-INF/services/*" }
+}
 
 // source compatibility
 compileJava.doFirst { println "Java source compatibility version : " + sourceCompatibility }
