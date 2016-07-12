@@ -60,6 +60,7 @@ dependencies {
 
 jar {
     //here we grab all the .class files inside messages.jar and we put them in our resulting jar
+    from (zipTree('lib-local/jmathio.jar')) { include '**/*.class', "META-INF/services/*" }
     from (zipTree('lib-local/jmathplot.jar')) { include '**/*.class', "META-INF/services/*" }
 }
 
