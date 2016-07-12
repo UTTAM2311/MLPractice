@@ -40,6 +40,9 @@ dependencies {
     // Main compilations
     // http://mvnrepository.com/artifact/org.apache.commons/commons-csv
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.4'
+    
+    // https://mvnrepository.com/artifact/com.opencsv/opencsv
+	compile group: 'com.opencsv', name: 'opencsv', version: '3.8'
 
     // https://mvnrepository.com/artifact/org.apache.spark/spark-mllib_2.10
     compile group: 'org.apache.spark', name: 'spark-mllib_2.10', version: '1.6.1'
