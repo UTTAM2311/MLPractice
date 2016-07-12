@@ -21,7 +21,7 @@ public class RoadMapModel {
         SparkConf conf = new SparkConf().setAppName("RoadMap Application").setMaster("local[*]");
 
         ParseCSVData data = new ParseCSVData(conf, filepath);
-        RegressionModelBuilder builder = new RegressionModelBuilder(data.getparsedData(), 0.0001, 0.000001);
+        RegressionModelBuilder builder = new RegressionModelBuilder(data.getparsedData(), 100000, 0.00001);
 
 
         for (LabeledPoint point : data.getparsedData().collect()) {
