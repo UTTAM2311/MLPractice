@@ -106,7 +106,7 @@ public class RoadMapModel {
 
 
         // create your PlotPanel (you can use it as a JPanel) with a legend at SOUTH Plot3DPanel
-        Plot3DPanel plot = new Plot3DPanel("3D-RoadMap");
+        Plot3DPanel plot = new Plot3DPanel();
 
         // add grid plot to the PlotPanel
         plot.addScatterPlot("actual-plot", Color.RED, x, y, z1);
@@ -115,7 +115,7 @@ public class RoadMapModel {
         plot.setBounds(7, 40, 10, 60);
 
         // put the PlotPanel in a JFrame like a JPanel
-        JFrame frame = new JFrame("a plot panel");
+        JFrame frame = new JFrame("3D Road-Map Plot");
         frame.setSize(600, 600);
         frame.setContentPane(plot);
         frame.setVisible(true);
