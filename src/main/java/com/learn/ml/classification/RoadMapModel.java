@@ -68,7 +68,7 @@ public class RoadMapModel {
 
         // put the PlotPanel in a JFrame like a JPanel
         JFrame frame = new JFrame("3D Road-Map Plot");
-        frame.setSize(600, 600);
+        frame.setSize(60000, 60000);
         frame.setContentPane(plot);
         frame.setVisible(true);
 
