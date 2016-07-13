@@ -10,7 +10,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 
-public class CostPricePrediction {
+public class HousePricePrediction {
 
     @SuppressWarnings({"serial"})
     public static void main(String[] args) {
@@ -37,11 +37,12 @@ public class CostPricePrediction {
         LinearRegressionModel model = builder.model;
         List<LabeledPoint> dataPoints = parsedData.collect();
 
-        /*
-         * for (LabeledPoint point : dataPoints) { System.out.println(" Actual Value: " +
-         * point.label() * 1000 + " Expected Value:" + model.predict(point.features()) * 1000 +
-         * " DataPoint: " + point.features()); }
-         */
+
+        for (LabeledPoint point : dataPoints) {
+            System.out.println(" Actual Value: " + point.label() * 1000 + " Expected Value:"
+                    + model.predict(point.features()) * 1000 + " DataPoint: " + point.features());
+        }
+
         System.out.println("Training Root Mean Squared Error = " + builder.getLeastMeanSquareError() * 1000);
         System.out.println("Mean Variation in the errors = " + builder.getVariation() * 1000);
         System.out.println("Model Equation: " + builder.getEquation());
