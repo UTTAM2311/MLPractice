@@ -21,13 +21,17 @@ public class RoadMapModel {
         SparkConf conf = new SparkConf().setAppName("RoadMap Application").setMaster("local[*]");
 
         ParseCSVData data = new ParseCSVData(conf, filepath);
-        RegressionModelBuilder builder = new RegressionModelBuilder(data.getparsedData(), 100000, 0.00001);
+        RegressionModelBuilder builder = new RegressionModelBuilder(data.getparsedData(), 0.0001, 0.0005);
         List<LabeledPoint> dataPoints = data.getparsedData().collect();
+
 
         for (LabeledPoint point : data.getparsedData().collect()) {
             System.out.println(" Actual Value: " + point.label() + " Expected Value:"
                     + builder.model.predict(point.features()) + " DataPoint: " + point.features());
         }
+
+
+        System.out.println(dataPoints.size());
         System.out.println("Features: " + Arrays.toString(data.getFeatures()));
         System.out.println("LMSE: " + builder.getLeastMeanSquareError());
         System.out.println("Mean Variation in the errors = " + builder.getVariation());
@@ -35,6 +39,7 @@ public class RoadMapModel {
         System.out.println("Intercept:" + builder.model.intercept());
         System.out.println("Equation:" + builder.getEquation());
         data.getparsedData().cache();
+
 
         int len = data.getparsedData().collect().size();
         JavaRDD<LabeledPoint> features = data.getparsedData();
@@ -68,7 +73,7 @@ public class RoadMapModel {
 
         // put the PlotPanel in a JFrame like a JPanel
         JFrame frame = new JFrame("3D Road-Map Plot");
-        frame.setSize(60000, 60000);
+        frame.setSize(600, 600);
         frame.setContentPane(plot);
         frame.setVisible(true);
 

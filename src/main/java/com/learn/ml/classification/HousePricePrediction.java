@@ -1,5 +1,6 @@
 package com.learn.ml.classification;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.spark.SparkConf;
@@ -14,7 +15,7 @@ public class HousePricePrediction {
 
     @SuppressWarnings({"serial"})
     public static void main(String[] args) {
-        String path = "src/main/resources/home.csv"; // Should be some file on your system
+        String path = "src/main/resources/houseprice.csv"; // Should be some file on your system
         SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
 
         // Load and parse the data
@@ -30,10 +31,9 @@ public class HousePricePrediction {
             }
         });
 
-        System.out.println(parsedData.count());
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.00001, 0.0001);
+        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.00001, 0.005);
         LinearRegressionModel model = builder.model;
         List<LabeledPoint> dataPoints = parsedData.collect();
 
@@ -42,6 +42,8 @@ public class HousePricePrediction {
             System.out.println(" Actual Value: " + point.label() * 1000 + " Expected Value:"
                     + model.predict(point.features()) * 1000 + " DataPoint: " + point.features());
         }
+        System.out.println(parsedData.count());
+        System.out.println(Arrays.toString(data.getFeatures()));
 
         System.out.println("Training Root Mean Squared Error = " + builder.getLeastMeanSquareError() * 1000);
         System.out.println("Mean Variation in the errors = " + builder.getVariation() * 1000);
