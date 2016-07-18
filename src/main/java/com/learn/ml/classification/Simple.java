@@ -18,7 +18,7 @@ public class Simple {
         SimpleRegression reg = new SimpleRegression(true);
         OLSMultipleLinearRegression ols = new OLSMultipleLinearRegression();
         ols.setNoIntercept(false);
-        CSVReader reader = new CSVReader(new FileReader(new File("src/main/resources/filteredHome.csv")));
+        CSVReader reader = new CSVReader(new FileReader(new File("src/main/resources/home.csv")));
         List<String[]> lines = reader.readAll();
         int dataPoints = (lines.size() - 1);
         System.out.println("Number of datapoints :" + dataPoints);
@@ -48,7 +48,7 @@ public class Simple {
         System.out.println("Coefficients: " + simlarityCoefficients.toString());
         System.out.println("Coefficients length :" + simlarityCoefficients.size());
 
-        double sum = 0;
+    /*    double sum = 0;
         for (int i = 0; i < dataPoints; i++) {
             double[] dat = olsX[i];
             double predict = predictValue(dat, simlarityCoefficients.elements());
@@ -56,9 +56,9 @@ public class Simple {
 
             System.out.println("datapoint:" + new DoubleArrayList(dat).toString() + "  predicted value:"
                     + predictValue(dat, simlarityCoefficients.elements()) + "  Actual value:" + olsY[i]);
-        }
+        }*/
 
-        System.out.println("LMSE: " + Math.sqrt(sum / 2 * dataPoints));
+   //     System.out.println("LMSE: " + Math.sqrt(sum / 2 * dataPoints));
          // single variable regression
         System.out.println(
                 "---------------------------------Regression for single variable ----------------------------------------");

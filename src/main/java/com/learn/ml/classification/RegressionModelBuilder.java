@@ -5,6 +5,9 @@ import java.io.Serializable;
 import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.mllib.optimization.L1Updater;
+import org.apache.spark.mllib.optimization.SquaredL2Updater;
+import org.apache.spark.mllib.optimization.Updater;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
@@ -25,11 +28,31 @@ public class RegressionModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
+    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize,
+            double regParam) {
+        this.parsedData = parsedData;
+        LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
+        algorithm.setIntercept(true);
+        Updater update = new L1Updater();
+        algorithm.optimizer().setStepSize(stepSize).setUpdater(update).setConvergenceTol(tolerance)
+                .setRegParam(regParam);
+        model = algorithm.run(parsedData.rdd());
+    }
+
     public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
         algorithm.optimizer().setStepSize(stepSize).setNumIterations(iters);
+        model = algorithm.run(parsedData.rdd());
+    }
+
+    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize, double regParam) {
+        this.parsedData = parsedData;
+        LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
+        algorithm.setIntercept(true);
+        Updater update = new SquaredL2Updater();
+        algorithm.optimizer().setStepSize(stepSize).setUpdater(update).setNumIterations(iters).setRegParam(regParam);
         model = algorithm.run(parsedData.rdd());
     }
 
