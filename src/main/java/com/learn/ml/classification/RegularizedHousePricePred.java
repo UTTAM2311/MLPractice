@@ -18,46 +18,58 @@ import org.math.plot.Plot2DPanel;
 public class RegularizedHousePricePred {
     @SuppressWarnings({"serial"})
     public static void main(String[] args) {
-        String path = "src/main/resources/predict.csv"; // Should be some file on your system
+        String path = "src/main/resources/tester.csv"; // Should be some file on your system
         SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
-
+        int order = 10;
         // Load and parse the data
         ParseCSVData data = new ParseCSVData(conf, path);
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
             public LabeledPoint call(LabeledPoint point) {
                 Vector features = point.features();
-                double[] v = new double[4];
-                v[0] = features.toArray()[0] / 1000;
-                v[1] = Math.pow(v[0], 2);
-                v[2] = Math.pow(v[0], 3);
-                v[3] = Math.pow(v[0], 4);
-                /*
-                 * v[4] = Math.pow(v[0], 5) / 1000; v[5] = Math.pow(v[0], 6) / 1000; v[6] =
-                 * Math.pow(v[0], 7) / 1000; v[7] = Math.pow(v[0], 8) / 1000; v[8] = Math.pow(v[0],
-                 * 9) / 1000; v[9] = Math.pow(v[0], 10) / 1000;
-                 */
-
-                return new LabeledPoint(point.label() / 1000, Vectors.dense(v));
+                double[] v = new double[order];
+                v[0] = features.toArray()[0] / 10;
+                for (int i = 1; i < order; i++) {
+                    v[i] = Math.pow(v[0], i + 1);
+                }
+                return new LabeledPoint(point.label(), Vectors.dense(v));
             }
         });
 
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.00001, 0.000055,0.00001 );
+        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.0001, 0.05);
         LinearRegressionModel model = builder.model;
+
+        RegressionModelBuilder builder2 = new RegressionModelBuilder(parsedData, 0.0001, 0.05, 10);
+        LinearRegressionModel model2 = builder2.model;
+
+        RegressionModelBuilder builder3 = new RegressionModelBuilder(parsedData, 0.0001, 0.05, 50);
+        LinearRegressionModel model3 = builder3.model;
+
         List<LabeledPoint> dataPoints = parsedData.collect();
-
-
         for (LabeledPoint point : dataPoints) {
-            System.out.println(" Actual Value: " + point.label() * 1000 + " Expected Value:"
-                    + model.predict(point.features()) * 1000 + " DataPoint: " + point.features());
+            System.out.println(" Actual Value: " + point.label() + " Expected Value:" + model.predict(point.features())
+                    + " DataPoint: " + point.features());
         }
+
         System.out.println(parsedData.count());
         System.out.println(Arrays.toString(data.getFeatures()));
 
-        System.out.println("Training Root Mean Squared Error = " + builder.getLeastMeanSquareError() * 1000);
-        System.out.println("Mean Variation in the errors = " + builder.getVariation() * 1000);
-        System.out.println("Model Equation: " + builder.getEquation());
+        System.out.println(
+                "Training Root Mean Squared Error without regularization= " + builder.getLeastMeanSquareError());
+        System.out.println("Mean Variation in the errors without regularization= " + builder.getVariation());
+        System.out.println("Model Equation without regularization : " + builder.getEquation());
+
+        System.out.println(
+                "Training Root Mean Squared Error with regularization  = " + builder2.getLeastMeanSquareError());
+        System.out.println("Mean Variation in the errors with regularization= " + builder2.getVariation());
+        System.out.println("Model Equation with regularization: " + builder2.getEquation());
+
+
+        System.out.println("Training Root Mean Squared Error with high regularization param= "
+                + builder3.getLeastMeanSquareError());
+        System.out.println("Mean Variation in the errors with high regularization param= " + builder3.getVariation());
+        System.out.println("Model Equation with high regularization param: " + builder3.getEquation());
 
 
         int len = data.getparsedData().collect().size();
@@ -66,14 +78,20 @@ public class RegularizedHousePricePred {
         double[] x = new double[len];
         double[] z1 = new double[len];
         double[] z2 = new double[len];
+        double[] z3 = new double[len];
+        double[] z4 = new double[len];
 
         // double[] weights = model.weights().toArray();
         for (int i = 0; i < dataPoints.size(); i++) {
             LabeledPoint point = dataPoints.get(i);
             double predict = model.predict(point.features());
+            double predict2 = model2.predict(point.features());
+            double predict3 = model3.predict(point.features());
             double[] pt = point.features().toArray();
             x[i] = pt[0];
             z2[i] = predict;
+            z3[i] = predict2;
+            z4[i] = predict3;
             z1[i] = point.label();
         }
 
@@ -85,6 +103,8 @@ public class RegularizedHousePricePred {
         // add grid plot to the PlotPanel
         plot.addScatterPlot("actual-plot", Color.RED, x, z1);
         plot.addScatterPlot("predict-plot", Color.green, x, z2);
+        plot.addScatterPlot("predict-plot2", Color.blue, x, z3);
+        plot.addScatterPlot("predict-plot3", Color.yellow, x, z4);
         plot.setAxisLabels("x", "y");
 
         // put the PlotPanel in a JFrame like a JPanel
