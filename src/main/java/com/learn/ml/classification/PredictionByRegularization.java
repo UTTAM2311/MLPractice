@@ -15,12 +15,17 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot2DPanel;
 
-public class RegularizedHousePricePred {
-    @SuppressWarnings({"serial"})
+public class PredictionByRegularization {
+
     public static void main(String[] args) {
         String path = "src/main/resources/tester.csv"; // Should be some file on your system
-        SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
         int order = 10;
+        drawPlots(path, order);
+    }
+
+    @SuppressWarnings("serial")
+    public static void drawPlots(String path, int order) {
+        SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
         // Load and parse the data
         ParseCSVData data = new ParseCSVData(conf, path);
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
@@ -112,7 +117,5 @@ public class RegularizedHousePricePred {
         frame.setSize(600, 600);
         frame.setContentPane(plot);
         frame.setVisible(true);
-
-
     }
 }

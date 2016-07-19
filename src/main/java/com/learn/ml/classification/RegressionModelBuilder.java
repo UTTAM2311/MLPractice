@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.mllib.optimization.L1Updater;
 import org.apache.spark.mllib.optimization.SquaredL2Updater;
 import org.apache.spark.mllib.optimization.Updater;
 import org.apache.spark.mllib.regression.LabeledPoint;
@@ -20,6 +19,12 @@ public class RegressionModelBuilder implements Serializable {
     public final LinearRegressionModel model;
     private JavaRDD<LabeledPoint> parsedData;
 
+    /**
+     * 
+     * @param parsedData
+     * @param tolerance
+     * @param stepSize
+     */
     public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
@@ -28,17 +33,30 @@ public class RegressionModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
+    /**
+     * 
+     * @param parsedData
+     * @param tolerance
+     * @param stepSize
+     * @param regParam
+     */
     public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize,
             double regParam) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
-        Updater update = new L1Updater();
+        Updater update = new SquaredL2Updater();
         algorithm.optimizer().setStepSize(stepSize).setUpdater(update).setConvergenceTol(tolerance)
                 .setRegParam(regParam);
         model = algorithm.run(parsedData.rdd());
     }
 
+    /**
+     * 
+     * @param parsedData
+     * @param iters
+     * @param stepSize
+     */
     public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
@@ -47,6 +65,13 @@ public class RegressionModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
+    /**
+     * 
+     * @param parsedData
+     * @param iters
+     * @param stepSize
+     * @param regParam
+     */
     public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize, double regParam) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
@@ -56,6 +81,10 @@ public class RegressionModelBuilder implements Serializable {
         model = algorithm.run(parsedData.rdd());
     }
 
+    /**
+     * 
+     * @return
+     */
     private JavaRDD<Tuple2<Double, Double>> getValuesAndPredict() {
         JavaRDD<Tuple2<Double, Double>> valuesAndPreds =
                 parsedData.map(new Function<LabeledPoint, Tuple2<Double, Double>>() {
@@ -71,6 +100,10 @@ public class RegressionModelBuilder implements Serializable {
 
     }
 
+    /**
+     * 
+     * @return
+     */
     public double getLeastMeanSquareError() {
         JavaRDD<Tuple2<Double, Double>> valuesAndPreds = getValuesAndPredict();
 
@@ -102,6 +135,10 @@ public class RegressionModelBuilder implements Serializable {
         return Mvar;
     }
 
+    /**
+     * 
+     * @return
+     */
     public String getEquation() {
         double[] coeff = model.weights().toArray();
         double intercept = model.intercept();

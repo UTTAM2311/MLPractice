@@ -15,7 +15,7 @@ import org.apache.spark.mllib.regression.LabeledPoint;
  * 
  * The CSV file should have the label at the last column. All the data points should be numbers
  * except for the first row(which should be name of the features).There should not be any missing
- * vales in data
+ * values in data
  * 
  * @author uttam
  *
