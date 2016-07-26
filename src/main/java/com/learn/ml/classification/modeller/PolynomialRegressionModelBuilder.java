@@ -34,9 +34,9 @@ public class PolynomialRegressionModelBuilder implements Serializable {
      * @param tolerance
      * @param stepSize
      */
-    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int order, double tolerance,
+    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> data, int order, double tolerance,
             double stepSize) {
-        this.parsedData = getParsedData(parsedData, order);
+        this.parsedData = getParsedData(data, order);
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
         algorithm.optimizer().setStepSize(stepSize).setConvergenceTol(tolerance);
@@ -51,9 +51,9 @@ public class PolynomialRegressionModelBuilder implements Serializable {
      * @param stepSize
      * @param regParam
      */
-    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int order, double tolerance,
+    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> data, int order, double tolerance,
             double stepSize, double regParam) {
-        this.parsedData = getParsedData(parsedData, order);
+        this.parsedData = getParsedData(data, order);
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
         Updater update = new SquaredL2Updater();
@@ -69,8 +69,8 @@ public class PolynomialRegressionModelBuilder implements Serializable {
      * @param iters
      * @param stepSize
      */
-    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int order, int iters, double stepSize) {
-        this.parsedData = getParsedData(parsedData, order);
+    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> data, int order, int iters, double stepSize) {
+        this.parsedData = getParsedData(data, order);
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
         algorithm.optimizer().setStepSize(stepSize).setNumIterations(iters);
@@ -81,6 +81,10 @@ public class PolynomialRegressionModelBuilder implements Serializable {
         return model;
     }
 
+    public JavaRDD<LabeledPoint> getParsedData() {
+        return parsedData;
+    }
+
     /**
      * 
      * @param parsedData -- parsed data should have only one feature
@@ -89,9 +93,9 @@ public class PolynomialRegressionModelBuilder implements Serializable {
      * @param stepSize
      * @param regParam
      */
-    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int order, int iters, double stepSize,
+    public PolynomialRegressionModelBuilder(JavaRDD<LabeledPoint> data, int order, int iters, double stepSize,
             double regParam) {
-        this.parsedData = getParsedData(parsedData, order);
+        this.parsedData = getParsedData(data, order);
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
         Updater update = new SquaredL2Updater();
@@ -100,7 +104,7 @@ public class PolynomialRegressionModelBuilder implements Serializable {
     }
 
     private JavaRDD<LabeledPoint> getParsedData(JavaRDD<LabeledPoint> parsedData, int order) {
-        return parsedData.map(new Function<LabeledPoint, LabeledPoint>() {
+        JavaRDD<LabeledPoint> data = parsedData.map(new Function<LabeledPoint, LabeledPoint>() {
             private static final long serialVersionUID = 1L;
 
             public LabeledPoint call(LabeledPoint point) {
@@ -113,6 +117,8 @@ public class PolynomialRegressionModelBuilder implements Serializable {
                 return new LabeledPoint(point.label(), Vectors.dense(v));
             }
         });
+        data.collect();
+        return data;
     }
 
     /**

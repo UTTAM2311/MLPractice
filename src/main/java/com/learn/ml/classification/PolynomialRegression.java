@@ -17,13 +17,16 @@ import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot2DPanel;
 
 import com.learn.ml.classification.modeller.ParseCSVData;
-import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+import com.learn.ml.classification.modeller.PolynomialRegressionModelBuilder;
 
 public class PolynomialRegression {
     public static void main(String[] args) {
         String path = "src/main/resources/predict.csv"; // Should be some file on your system
-        int order = 1;
-        drawPlots(path, order, 15000, 0.5, 0);
+        drawPlots(path, 2, 10000, 0.155, 0);
+        // drawPlots(path, 3, 10000, 0.01155, 0);
+        // drawPlots(path, 4, 10000, 0.000655, 0);
+        //drawPlots(path, 5, 1000, 0.0000006, 0);
+
     }
 
     @SuppressWarnings("serial")
@@ -42,10 +45,11 @@ public class PolynomialRegression {
         });
 
         // building a model
-        LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(parsedData, iter, stepSize, regParam);
+        PolynomialRegressionModelBuilder builder =
+                new PolynomialRegressionModelBuilder(parsedData, order, iter, stepSize, regParam);
         LinearRegressionModel model = builder.model;
 
-        List<LabeledPoint> dataPoints = parsedData.collect();
+        List<LabeledPoint> dataPoints = builder.getParsedData().collect();
         for (LabeledPoint point : dataPoints) {
             System.out.println(" Actual Value: " + point.label() + " Expected Value:" + model.predict(point.features())
                     + " DataPoint: " + point.features());
