@@ -18,8 +18,8 @@ import org.math.plot.Plot2DPanel;
 public class PolynomialRegression {
     public static void main(String[] args) {
         String path = "src/main/resources/predict.csv"; // Should be some file on your system
-        int order = 4;
-        drawPlots(path, order, 10000, 0.03, 0);
+        int order = 1;
+        drawPlots(path, order, 15000, 0.5, 0);
     }
 
     @SuppressWarnings("serial")
@@ -32,11 +32,11 @@ public class PolynomialRegression {
             public LabeledPoint call(LabeledPoint point) {
                 Vector features = point.features();
                 double[] v = new double[order];
-                v[0] = features.toArray()[0] / 10000;
+                v[0] = features.toArray()[0] / 1000;
                 for (int i = 1; i < order; i++) {
                     v[i] = Math.pow(v[0], i + 1);
                 }
-                return new LabeledPoint(point.label() / 10000, Vectors.dense(v));
+                return new LabeledPoint(point.label() / 1000, Vectors.dense(v));
             }
         });
 
@@ -56,6 +56,7 @@ public class PolynomialRegression {
         System.out.println("Training Root Mean Squared Error  = " + builder.getLeastMeanSquareError());
         System.out.println("Mean Variation in the errors = " + builder.getVariation());
         System.out.println("Model Equation : " + builder.getEquation());
+
         int len = data.getparsedData().collect().size();
         JavaRDD<LabeledPoint> features = data.getparsedData();
 
@@ -75,7 +76,7 @@ public class PolynomialRegression {
 
         features.collect();
 
-        // create your PlotPanel (you can use it as a JPanel) with a legend at SOUTH Plot3DPanel
+        // create your PlotPanel (you can use it as a JPanel)
         Plot2DPanel plot = new Plot2DPanel();
 
         // add grid plot to the PlotPanel
