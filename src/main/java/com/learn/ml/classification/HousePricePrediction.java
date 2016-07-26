@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -21,8 +22,9 @@ public class HousePricePrediction {
         String path = "src/main/resources/houseprice.csv"; // Should be some file on your system
         SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]");
 
+        JavaSparkContext sc = new JavaSparkContext(conf);
         // Load and parse the data
-        ParseCSVData data = new ParseCSVData(conf, path);
+        ParseCSVData data = new ParseCSVData(sc, path);
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
             public LabeledPoint call(LabeledPoint point) {
                 Vector features = point.features();

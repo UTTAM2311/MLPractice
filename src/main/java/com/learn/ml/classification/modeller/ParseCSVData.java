@@ -36,8 +36,7 @@ public class ParseCSVData implements Serializable {
      * @param conf configuration for a spark application
      * @param filepath CSV filepath
      */
-    public ParseCSVData(SparkConf conf, String filepath) {
-        JavaSparkContext sc = new JavaSparkContext(conf);
+    public ParseCSVData(JavaSparkContext sc, String filepath) {
         init(sc, filepath);
     }
 

@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.math.plot.Plot3DPanel;
 
@@ -22,8 +23,9 @@ public class RoadMapModel {
         String filepath = "src/main/resources/3D_spatial_network.csv"; // Should be some file on
         // your system
         SparkConf conf = new SparkConf().setAppName("RoadMap Application").setMaster("local[*]");
-
-        ParseCSVData data = new ParseCSVData(conf, filepath);
+        JavaSparkContext sc = new JavaSparkContext(conf);
+        // Load and parse the data
+        ParseCSVData data = new ParseCSVData(sc, filepath);
         LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(data.getparsedData(), 0.0001, 0.0005);
         List<LabeledPoint> dataPoints = data.getparsedData().collect();
 

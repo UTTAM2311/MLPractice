@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
@@ -13,23 +14,25 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot3DPanel;
 
-import com.learn.ml.classification.modeller.ParseCSVData;
 import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+import com.learn.ml.classification.modeller.ParseCSVData;
 
 public class RegressionAnalyzer {
     public static void main(String[] args) {
         String path = "src/main/resources/predict.csv"; // Should be some file on your system
-        plotErrorFunction(path, 0.16, 0, 25);
+        SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]")
+                .set("spark.driver.allowMultipleContexts", "true");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+        plotErrorFunction(path, sc, 0.7, 0, 30);
 
     }
 
     @SuppressWarnings("serial")
-    public static LinearRegressionModelBuilder getModel(String path, int iter, double stepSize, double regParam) {
-        SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]")
-                .set("spark.driver.allowMultipleContexts", "true");
-
+    public static LinearRegressionModelBuilder getModel(String path, JavaSparkContext sc, int iter, double stepSize,
+            double regParam) {
         // Load and parse the data
-        ParseCSVData data = new ParseCSVData(conf, path);
+        ParseCSVData data = new ParseCSVData(sc, path);
 
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
             public LabeledPoint call(LabeledPoint point) {
@@ -44,12 +47,12 @@ public class RegressionAnalyzer {
         return builder;
     }
 
-    public static void plotErrorFunction(String path, double stepsize, double regParam, int iter) {
+    public static void plotErrorFunction(String path, JavaSparkContext sc, double stepsize, double regParam, int iter) {
         double[] x = new double[iter + 1];
         double[] y = new double[iter + 1];
         double[] z = new double[iter + 1];
         for (int i = 0; i <= iter; i++) {
-            LinearRegressionModelBuilder builder = getModel(path, i, stepsize, regParam);
+            LinearRegressionModelBuilder builder = getModel(path, sc, i, stepsize, regParam);
             LinearRegressionModel model = builder.model;
             x[i] = model.intercept();
             y[i] = model.weights().toArray()[0];
