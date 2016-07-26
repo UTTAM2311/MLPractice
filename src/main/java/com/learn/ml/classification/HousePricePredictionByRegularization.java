@@ -15,8 +15,11 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot2DPanel;
 
-public class HousePricePredictionByRegularization {
+import com.learn.ml.classification.modeller.ParseCSVData;
+import com.learn.ml.classification.modeller.PolynomialRegressionModelBuilder;
+import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
 
+public class HousePricePredictionByRegularization {
 
     public static void main(String[] args) {
         String path = "src/main/resources/filteredHome.csv"; // Should be some file on your system
@@ -32,11 +35,7 @@ public class HousePricePredictionByRegularization {
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
             public LabeledPoint call(LabeledPoint point) {
                 Vector features = point.features();
-                double[] v = new double[order];
-                v[0] = features.toArray()[0] / 10000;
-                for (int i = 1; i < order; i++) {
-                    v[i] = Math.pow(v[0], i + 1);
-                }
+                double v = features.toArray()[0] / 10000;
                 return new LabeledPoint(point.label() / 1000, Vectors.dense(v));
             }
         });
@@ -45,14 +44,14 @@ public class HousePricePredictionByRegularization {
         System.out.println(Arrays.toString(data.getFeatures()));
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.0001, 0.055);
+        PolynomialRegressionModelBuilder builder = new PolynomialRegressionModelBuilder(parsedData,order, 0.0001, 0.055);
         LinearRegressionModel model = builder.model;
 
         // model with regularization param
-        RegressionModelBuilder builder2 = new RegressionModelBuilder(parsedData, 0.0001, 0.055, 10);
+        LinearRegressionModelBuilder builder2 = new LinearRegressionModelBuilder(parsedData, 0.0001, 0.055, 10);
         LinearRegressionModel model2 = builder2.model;
         // model with regularization param
-        RegressionModelBuilder builder3 = new RegressionModelBuilder(parsedData, 0.0001, 0.055, 50);
+        LinearRegressionModelBuilder builder3 = new LinearRegressionModelBuilder(parsedData, 0.0001, 0.055, 50);
         LinearRegressionModel model3 = builder3.model;
 
 

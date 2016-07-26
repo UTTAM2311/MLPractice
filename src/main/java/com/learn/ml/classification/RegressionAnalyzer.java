@@ -13,6 +13,9 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot3DPanel;
 
+import com.learn.ml.classification.modeller.ParseCSVData;
+import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+
 public class RegressionAnalyzer {
     public static void main(String[] args) {
         String path = "src/main/resources/predict.csv"; // Should be some file on your system
@@ -21,7 +24,7 @@ public class RegressionAnalyzer {
     }
 
     @SuppressWarnings("serial")
-    public static RegressionModelBuilder getModel(String path, int iter, double stepSize, double regParam) {
+    public static LinearRegressionModelBuilder getModel(String path, int iter, double stepSize, double regParam) {
         SparkConf conf = new SparkConf().setAppName("Simple Application").setMaster("local[*]")
                 .set("spark.driver.allowMultipleContexts", "true");
 
@@ -37,7 +40,7 @@ public class RegressionAnalyzer {
         });
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, iter, stepSize, regParam);
+        LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(parsedData, iter, stepSize, regParam);
         return builder;
     }
 
@@ -46,7 +49,7 @@ public class RegressionAnalyzer {
         double[] y = new double[iter + 1];
         double[] z = new double[iter + 1];
         for (int i = 0; i <= iter; i++) {
-            RegressionModelBuilder builder = getModel(path, i, stepsize, regParam);
+            LinearRegressionModelBuilder builder = getModel(path, i, stepsize, regParam);
             LinearRegressionModel model = builder.model;
             x[i] = model.intercept();
             y[i] = model.weights().toArray()[0];

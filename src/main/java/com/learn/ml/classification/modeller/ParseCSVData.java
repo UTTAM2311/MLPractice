@@ -1,4 +1,4 @@
-package com.learn.ml.classification;
+package com.learn.ml.classification.modeller;
 
 import java.io.Serializable;
 import java.util.Arrays;

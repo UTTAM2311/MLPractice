@@ -15,6 +15,9 @@ import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 import org.math.plot.Plot2DPanel;
 
+import com.learn.ml.classification.modeller.ParseCSVData;
+import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+
 public class PolynomialRegression {
     public static void main(String[] args) {
         String path = "src/main/resources/predict.csv"; // Should be some file on your system
@@ -31,17 +34,13 @@ public class PolynomialRegression {
         JavaRDD<LabeledPoint> parsedData = data.getparsedData().map(new Function<LabeledPoint, LabeledPoint>() {
             public LabeledPoint call(LabeledPoint point) {
                 Vector features = point.features();
-                double[] v = new double[order];
-                v[0] = features.toArray()[0] / 1000;
-                for (int i = 1; i < order; i++) {
-                    v[i] = Math.pow(v[0], i + 1);
-                }
+                double v = features.toArray()[0] / 1000;
                 return new LabeledPoint(point.label() / 1000, Vectors.dense(v));
             }
         });
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, iter, stepSize, regParam);
+        LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(parsedData, iter, stepSize, regParam);
         LinearRegressionModel model = builder.model;
 
         List<LabeledPoint> dataPoints = parsedData.collect();

@@ -11,6 +11,9 @@ import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.regression.LinearRegressionModel;
 
+import com.learn.ml.classification.modeller.ParseCSVData;
+import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+
 public class HousePricePrediction {
 
     @SuppressWarnings({"serial"})
@@ -33,7 +36,7 @@ public class HousePricePrediction {
 
 
         // building a model
-        RegressionModelBuilder builder = new RegressionModelBuilder(parsedData, 0.00001, 0.005);
+        LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(parsedData, 0.00001, 0.005);
         LinearRegressionModel model = builder.model;
         List<LabeledPoint> dataPoints = parsedData.collect();
 

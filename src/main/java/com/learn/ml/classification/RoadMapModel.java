@@ -11,6 +11,9 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.math.plot.Plot3DPanel;
 
+import com.learn.ml.classification.modeller.ParseCSVData;
+import com.learn.ml.classification.modeller.LinearRegressionModelBuilder;
+
 
 
 public class RoadMapModel {
@@ -21,7 +24,7 @@ public class RoadMapModel {
         SparkConf conf = new SparkConf().setAppName("RoadMap Application").setMaster("local[*]");
 
         ParseCSVData data = new ParseCSVData(conf, filepath);
-        RegressionModelBuilder builder = new RegressionModelBuilder(data.getparsedData(), 0.0001, 0.0005);
+        LinearRegressionModelBuilder builder = new LinearRegressionModelBuilder(data.getparsedData(), 0.0001, 0.0005);
         List<LabeledPoint> dataPoints = data.getparsedData().collect();
 
 

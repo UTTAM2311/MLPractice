@@ -1,4 +1,4 @@
-package com.learn.ml.classification;
+package com.learn.ml.classification.modeller;
 
 import java.io.Serializable;
 
@@ -13,7 +13,7 @@ import org.apache.spark.mllib.regression.LinearRegressionWithSGD;
 
 import scala.Tuple2;
 
-public class RegressionModelBuilder implements Serializable {
+public class LinearRegressionModelBuilder implements Serializable {
     private static final long serialVersionUID = 6200138757549471043L;
 
     public final LinearRegressionModel model;
@@ -25,7 +25,7 @@ public class RegressionModelBuilder implements Serializable {
      * @param tolerance
      * @param stepSize
      */
-    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize) {
+    public LinearRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
@@ -40,7 +40,7 @@ public class RegressionModelBuilder implements Serializable {
      * @param stepSize
      * @param regParam
      */
-    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize,
+    public LinearRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, double tolerance, double stepSize,
             double regParam) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
@@ -57,7 +57,7 @@ public class RegressionModelBuilder implements Serializable {
      * @param iters
      * @param stepSize
      */
-    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
+    public LinearRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
@@ -72,7 +72,7 @@ public class RegressionModelBuilder implements Serializable {
      * @param stepSize
      * @param regParam
      */
-    public RegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize, double regParam) {
+    public LinearRegressionModelBuilder(JavaRDD<LabeledPoint> parsedData, int iters, double stepSize, double regParam) {
         this.parsedData = parsedData;
         LinearRegressionWithSGD algorithm = new LinearRegressionWithSGD();
         algorithm.setIntercept(true);
